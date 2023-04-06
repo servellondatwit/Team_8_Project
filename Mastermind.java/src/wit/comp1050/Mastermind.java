@@ -1,105 +1,136 @@
 package wit.comp1050;
-
+import java.util.Random;
 import java.util.*;
 import java.awt.Color;
-
-import static java.awt.Color.*;
-
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Mastermind {
+    //check for white pegs
+    public static boolean checkWhite(int guess, int colors[]) {
+        boolean test = false;
+        for(int i = 0; colors.length == i; i++){
+            if((colors[i]==guess) || (colors[guess]) != guess){
+                test = true;
+            }
+            else{
+                test = false;
+            }
+        }
+        return test;
+    }
+    
+
+    //for future use when we need to go from the numbers to colors for the GUI
+    public static String numToColor(int num) {
+        String color = ("");
+        
+        switch (num) {
+            case 0 : {
+                color = ("red");
+                break;
+            }
+            case 1 : {
+                color = ("blue");
+                break;
+            }
+            case 2 : {
+                color = ("yellow");
+                break;
+            }
+            case 3 : {
+                color = ("green");
+                break;
+            }
+            case 4 : {
+                color = ("brown");
+                break;
+            }
+            case 5 : {
+                color = ("black");
+                break;
+            }
+
+        }
+
+        return color;
+
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
 
-        Color[] Colors = {RED, BLUE, GREEN, MAGENTA, BLACK,
-                WHITE, YELLOW, ORANGE, CYAN};
+        int[] colors = {random.nextInt(5), random.nextInt(5), random.nextInt(5), random.nextInt(5)};
+        boolean loop = true;
 
-        int[] Num = {0, 1, 2, 3, 4, 5, 6, 7};
+        int black = 0;
+        int white = 0;
+        int attemptsLeft = 6;
 
-        Code solution = new Code(Num);
-        Color[] gameColor = new Color[6];
-
-        for (int i = 0; i < Num.length; i++) {
-            gameColor[i] = Colors[Num[i]];
-        }
-        for (int i = 0; i < Num.length; i++) {
-            System.out.print(gameColor[i] + " ");
-        }
-        System.out.println();
-
-
-        static int Code (int[] ar){
-            Random rnd = ThreadLocalRandom.current();
-            for (int i = ar.length - 1; i > 0; i--) {
-                int index = rnd.nextInt(i + 1);
-                // Simple swap
-                int a = ar[index];
-                ar[index] = ar[i];
-                ar[i] = a;
-            }
-
-
-            //TODO: Make this work
-            System.out.print("Please select your Difficulty (NOVICE, BEGINNER, INTERMEDIATE, EXPERT):");
-            String difficulty = scanner.nextLine();
-            try {
-                var enumValue = Difficulty.valueOf(difficulty);
-                System.out.printf("Welcome to Mastermind you have selected %s%n", difficulty);
-                break;
-
-            } catch (IllegalArgumentException ex) {
-                System.out.println("Please select a listed Difficulty");
-                continue;
-
-            }
-            Difficulty theDifficulty = switch (difficulty) {
-                case "Novice" -> Difficulty.NOVICE;
-                case "Beginner" -> Difficulty.BEGINNER;
-                case "Intermediate" -> Difficulty.INTERMEDIATE;
-                case "Expert" -> Difficulty.EXPERT;
-                default -> throw new IllegalArgumentException("Please select a valid Difficulty!");
-            };
-        }
-        while (true) ;
-        System.out.println("Please make your first guess!");
-
-        Code secret = new Code(gameColor);
-
-        boolean continuetoPlay = true;
+        //game loop
         do {
-            System.out.print("Guess a code (no duplicate colors): ");
-            String[] currentGuess = new String[6];
-            for (int i = currentGuess.length; i < 0; i++) {
-                System.out.print("What is the next color of your guess?");
-                currentGuess[i] = scanner.next();
-            }
+            //user display, each color has a number B represents how many black pegs you have and white the same. 
+            System.out.printf("colors: red(0) | blue(1) | yellow(2) | green(3) | brown(4) | black(5) >> B:%s W:%s | Attempts Left:%s %n", black, white, attemptsLeft);
+            System.out.print("choose 4 colors seperated by space: ");
 
-            if (currentGuess.equals(secret.getCode())) {
-                System.out.println("You win!");
-                continuetoPlay = false;
+            black = 0;
+            white = 0;
+            
+            //user input
+            int guess0 = scanner.nextInt();
+            int guess1 = scanner.nextInt();
+            int guess2 = scanner.nextInt();
+            int guess3 = scanner.nextInt();
+            System.out.printf("%n%n%n");
+            
+            //checks for the pegs, black works white still has some bugs can be made into a funciton later.
+            if (guess0 == colors[0]) {
+                black ++;
             } else {
-                int[] excessCounter = new int[secret.numofColors]
-                for (int i = 0; i < currentGuess.length; i++) {
-                    if (currentGuess.getCode()[i] == secret.getCode()[i]) {
-                        correctColorAndPos++;
-                    }
-                    else {
-                        excessCounter[currentGuess.getCode()[i]]++;
-                        unusedSolutionCounter[secret.getCode()[i]++];
-                    }
+                if (checkWhite(guess0, colors)){
+                    white ++;
                 }
-                // compute the score -# of white pegs and # of black pegs
-                //print score
-                //loop
             }
-            while {
-                (continuetoPlay);
 
-                private String correctColorAndPos = "Correct Color and Pos: ";
-                private String correctColorWrongPos = "Correct Color Wrong Pos: ";
-                private int correctColorWrongPos = 0;
-                private int correctColorAndPos = 0;
+            if (guess1 == colors[1]) {
+                black ++;
+            } else {
+                if (checkWhite(guess1, colors)){
+                    white ++;
+                }
             }
-        }
+            if (guess2 == colors[2]) {
+                black ++;
+            } else {
+                if (checkWhite(guess2, colors)){
+                    white ++;
+                }
+            }
+
+            if (guess3 == colors[3]) {
+                black ++;
+            } else {
+                if (checkWhite(guess3, colors)){
+                    white ++;
+                }
+            }
+
+            
+            attemptsLeft --;
+
+            //checks the two condictions to end the game, no more tries or you have guess all 4 correctly
+            if (black == 4) {
+                loop = false;
+                System.out.print("WINNER WINNER CHICKEN DINER");
+            }
+            if (attemptsLeft == 0) {
+                loop = false;
+                System.out.print("Round lost.");
+            }
+
+        } while (loop == true);
+
+        scanner.close();
     }
 }
+
